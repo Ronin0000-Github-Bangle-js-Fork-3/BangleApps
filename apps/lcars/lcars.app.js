@@ -2,6 +2,7 @@ const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
 const storage = require('Storage')
+//set default settings for the app
 let settings = {
   alarm: -1,
   dataRow1: "Steps",
@@ -14,6 +15,7 @@ let settings = {
   themeColor3BG: "#0094FF",
   disableAlarms: false,
   disableData: false,
+  useclockinfo: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
