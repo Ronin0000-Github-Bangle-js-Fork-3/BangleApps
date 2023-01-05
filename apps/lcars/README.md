@@ -21,6 +21,7 @@ the "sched" app must be installed on your device.
  * Customizable theming colors in the settings menu of the app.
  * Enable or disable the alarm feature.
  * Enable or disbale the graphs for steps + hrm.
+ * Has an optional setting to use the clock_info modules for the three data displaying areas.
 
 ## Data that can be configured
  * Steps - Steps loaded via the wpedom app.
@@ -32,12 +33,16 @@ the "sched" app must be installed on your device.
  * Wind - Wind loaded via the weather module + gadgetbridge. Set kph / mph in the settings.
  * Altitude - Shows the altitude in m.
  * CoreT - Temperature of device
+ * You can also change the data with any of the clock info modules if enabled in the settings window.
 
 ## Multiple screens support
 Access different screens via tap on the left/ right side of the screen
 
 ![](screenshot_1.png)
 ![](screenshot_2.png)
+
+## Clock Info Module Support
+Access diffrent data with the clock info module if enabled in the app settings.
 
 ## Creator
 - [David Peer](https://github.com/peerdavid)
