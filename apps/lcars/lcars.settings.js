@@ -15,6 +15,7 @@
     themeColor3BG: "#0094FF",
     disableAlarms: false,
     disableData: false,
+    useclockinfo: false,
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -118,6 +119,14 @@
       format: () => (settings.disableData ? 'Yes' : 'No'),
       onchange: () => {
         settings.disableData = !settings.disableData;
+        save();
+      },
+    },
+    'Enable clock info modules for Rows': {
+      value: settings.useclockinfo,
+      format: () => (settings.useclockinfo ? 'Yes' : 'No'),
+      onchange: () => {
+        settings.useclockinfo = !settings.useclockinfo;
         save();
       },
     },
