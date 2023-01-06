@@ -13,9 +13,9 @@ let settings = {
   themeColor1BG: "#FF9900",
   themeColor2BG: "#FF00DC",
   themeColor3BG: "#0094FF",
-  disableAlarms: true,
-  disableData: true,
-  useclockinfo: true,
+  disableAlarms: false,
+  disableData: false,
+  useclockinfo: false,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -39,6 +39,11 @@ let lcarsViewPos = 0;
 // let hrmValue = 0;
 var plotMonth = false;
 
+
+let clockInfoMenu1;
+let clockInfoMenu2;
+let clockInfoMenu3;
+let clockInfoItems;
 
 function convert24to16(input)
 {
@@ -223,7 +228,7 @@ function drawData(key, y, c){
 }
 
 let clockInfoDraw = (itm, info, options) => {
-  g.reset().clearRect(options.x, options.y, options.x+options.w, options.y+options.h-1);
+  g.clearRect(options.x, options.y, options.x+options.w, options.y+options.h-1);
   if(options.n==1){
       g.setColor(settings.themeColor1BG);
   }else if(options.n==2){
@@ -242,18 +247,22 @@ let clockInfoDraw = (itm, info, options) => {
   g.drawString(info.text, midx,options.y+23); // draw the text
 };
 
-function __drawDataClockInfo(c){
-  // Load the clock infos
-  let clockInfoItems = require("clock_info").load();
-  // Add the
-  let clockInfoMenu1 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 92, w: 120, h:25, n: 1,draw : clockInfoDraw});
-  let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 118, w: 120, h:25, n: 2,draw : clockInfoDraw});
-  let clockInfoMenu3 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 144, w: 120, h:25, n: 3,draw : clockInfoDraw});
+if(settings.useclockinfo == true){
+  clockInfoItems = require("clock_info").load();
+  clockInfoMenu1 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 92, w: 120, h:25, n: 1,draw : clockInfoDraw});
+  clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 118, w: 120, h:25, n: 2,draw : clockInfoDraw});
+  clockInfoMenu3 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 144, w: 120, h:25, n: 3,draw : clockInfoDraw});
+  clockInfoMenu1.on('redraw', clockInfoDraw); // ensures we redraw when we need to
+  clockInfoMenu2.on('redraw', clockInfoDraw); // ensures we redraw when we need to
+  clockInfoMenu3.on('redraw', clockInfoDraw); // ensures we redraw when we need to
 }
 
 function _drawData(key, y, c){
   if(settings.useclockinfo == true){
-    __drawDataClockInfo(c);
+    console.log("in");
+    clockInfoMenu1.redraw();
+    clockInfoMenu2.redraw();
+    clockInfoMenu3.redraw();
     return;
   }
   key = key.toUpperCase();
@@ -590,6 +599,9 @@ function draw(){
     } else {
       Bangle.drawWidgets();
     }
+    clockInfoMenu1.redraw();
+    clockInfoMenu2.redraw();
+    clockInfoMenu3.redraw();
 }
 
 
@@ -743,7 +755,7 @@ Bangle.on('touch', function(btn, e){
   var is_right = e.x > right;
   var is_upper = e.y < upper;
   var is_lower = e.y > lower;
-  
+
   if(!settings.disableData){
     if(is_left && lcarsViewPos == 1){
       feedback();
@@ -784,7 +796,17 @@ Bangle.on('touch', function(btn, e){
  * Lets start widgets, listen for btn etc.
  */
 // Show launcher when middle button pressed
-Bangle.setUI("clock");
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    clockInfoMenu1.remove();
+    delete clockInfoMenu1;
+    clockInfoMenu2.remove();
+    delete clockInfoMenu2;
+    clockInfoMenu3.remove();
+    delete clockInfoMenu3;
+  }
+});
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup and draw clock
