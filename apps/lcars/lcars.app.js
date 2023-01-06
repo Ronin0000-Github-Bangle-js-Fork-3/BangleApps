@@ -798,17 +798,7 @@ Bangle.on('touch', function(btn, e){
  * Lets start widgets, listen for btn etc.
  */
 // Show launcher when middle button pressed
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    clockInfoMenu1.remove();
-    delete clockInfoMenu1;
-    clockInfoMenu2.remove();
-    delete clockInfoMenu2;
-    clockInfoMenu3.remove();
-    delete clockInfoMenu3;
-  }
-});
+Bangle.setUI({mode : "clock"});
 Bangle.loadWidgets();
 
 // Clear the screen once, at startup and draw clock
