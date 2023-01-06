@@ -765,7 +765,7 @@ Bangle.on('touch', function(btn, e){
       draw();
       return;
 
-    } else if(is_right && lcarsViewPos == 0){
+    } else if(e.x > 88 && e.y < 70 && lcarsViewPos == 0){
       feedback();
       lcarsViewPos = 1;
       draw();
