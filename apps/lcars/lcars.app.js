@@ -259,7 +259,6 @@ if(settings.useclockinfo == true){
 
 function _drawData(key, y, c){
   if(settings.useclockinfo == true){
-    console.log("in");
     clockInfoMenu1.redraw();
     clockInfoMenu2.redraw();
     clockInfoMenu3.redraw();
@@ -457,6 +456,9 @@ function drawPosition0(){
 }
 
 function drawPosition1(){
+  /*if(settings.useclockinfo){
+    clockInfoMenu1.load.hide();
+  }*/
   // Draw background image
   var offset = settings.fullscreen ? 0 : 24;
   g.drawImage(bgRight, 149, offset);
@@ -763,7 +765,7 @@ Bangle.on('touch', function(btn, e){
       draw();
       return;
 
-    } else if(is_right  && lcarsViewPos == 0){
+    } else if(is_right && lcarsViewPos == 0){
       feedback();
       lcarsViewPos = 1;
       draw();
