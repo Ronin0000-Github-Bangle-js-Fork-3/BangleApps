@@ -1,7 +1,7 @@
 const TIMER_IDX = "lcars";
 const SETTINGS_FILE = "lcars.setting.json";
 const locale = require('locale');
-const storage = require('Storage')
+const storage = require('Storage');
 //set default settings for the app
 let settings = {
   alarm: -1,
@@ -13,13 +13,13 @@ let settings = {
   themeColor1BG: "#FF9900",
   themeColor2BG: "#FF00DC",
   themeColor3BG: "#0094FF",
-  disableAlarms: false,
-  disableData: false,
-  useclockinfo: false,
+  disableAlarms: true,
+  disableData: true,
+  useclockinfo: true,
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
-  settings[key] = saved_settings[key]
+  settings[key] = saved_settings[key];
 }
 
 /*
@@ -222,9 +222,41 @@ function drawData(key, y, c){
   }
 }
 
+let clockInfoDraw = (itm, info, options) => {
+  g.reset().clearRect(options.x, options.y, options.x+options.w, options.y+options.h-1);
+  if(options.n==1){
+      g.setColor(settings.themeColor1BG);
+  }else if(options.n==2){
+      g.setColor(settings.themeColor2BG);
+  }else{
+      g.setColor(settings.themeColor3BG);
+  }
+  g.fillRect(options.x+5, options.y+1, options.x+options.w-35 ,options.y+options.h-1);
+  g.fillCircle(options.x+5, options.y+13, 11);
+  g.setColor(255,255,255);
+  if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-35, options.y+options.h-1); // show if focused
+  var midx = options.x+options.w/2;
+  if (info.img) g.drawImage(info.img, midx-60,options.y+1); // draw the image
+  g.setFontAntonioMedium();
+  g.setFontAlign(0,1);
+  g.drawString(info.text, midx,options.y+23); // draw the text
+};
+
+function __drawDataClockInfo(c){
+  // Load the clock infos
+  let clockInfoItems = require("clock_info").load();
+  // Add the
+  let clockInfoMenu1 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 92, w: 120, h:25, n: 1,draw : clockInfoDraw});
+  let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 118, w: 120, h:25, n: 2,draw : clockInfoDraw});
+  let clockInfoMenu3 = require("clock_info").addInteractive(clockInfoItems, {x : 85, y: 144, w: 120, h:25, n: 3,draw : clockInfoDraw});
+}
 
 function _drawData(key, y, c){
-  key = key.toUpperCase()
+  if(settings.useclockinfo == true){
+    __drawDataClockInfo(c);
+    return;
+  }
+  key = key.toUpperCase();
   var text = key;
   var value = "ERR";
   var should_print= true;
@@ -268,7 +300,7 @@ function _drawData(key, y, c){
         value = Math.round(data.altitude);
         printRow(text, value, y, c);
       }
-    })
+    });
 
   } else if(key == "CORET"){
     value = locale.temp(parseInt(E.getTemperature()));
@@ -371,7 +403,7 @@ function drawPosition0(){
   drawHorizontalBgLine(color2, batStart, batX2, 171, 5);
   drawHorizontalBgLine(cGrey, batX2, 172, 171, 5);
   for(var i=0; i+batStart<=172; i+=parseInt(batWidth/4)){
-    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8)
+    drawHorizontalBgLine(cBlack, batStart+i, batStart+i+3, 168, 8);
   }
 
   // Draw Infos
@@ -600,7 +632,7 @@ function getWeather(){
     var speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
     weather.wind = Math.round(wind[1] * speedFactor);
 
-    return weather
+    return weather;
 
   } catch(ex) {
     // Return default
@@ -646,7 +678,7 @@ function getAlarmMinutes(){
 function increaseAlarm(){
   try{
       var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-      var alarm = require('sched')
+      var alarm = require('sched');
       alarm.setAlarm(TIMER_IDX, {
         timer : (minutes+5)*60*1000,
       });
@@ -659,7 +691,7 @@ function decreaseAlarm(){
       var minutes = getAlarmMinutes();
       minutes -= 5;
 
-      var alarm = require('sched')
+      var alarm = require('sched');
       alarm.setAlarm(TIMER_IDX, undefined);
 
       if(minutes > 0){
